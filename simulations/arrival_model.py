@@ -17,10 +17,13 @@ from typing import Callable
 import bisect
 
 class Agent:
-    product_value: float # monetary value of product
+    _product_value: float # monetary value of product
 
     def __init__(self, product_value: float):
-        self.product_value = product_value
+        self._product_value = product_value
+
+    def get_product_value(self):
+        return self._product_value
 
 class ArrivalMarket:
     def __init__(
@@ -62,13 +65,5 @@ class ArrivalMarket:
             else:
                 break
 
-            # check pool for possible deals, finalizing them until there are no more deals
-            if buyer_pool[0].product_value > seller_pool[0].product_value:
-                max_price = np.min(
-                    buyer_pool[0].product_value, # buyer will pay no more than their product_value
-                    seller_pool[1].product_value # seller can charge no more than the next best seller's product_value
-                )
-                min_price = np.max(
-                    seller_pool[0].product_value, # seller will charge no less than their product_value
-                    buyer_pool[1].product_value # buyer can pay no less than the next best buyer's product_value
-                )
+            # make all possible deals in current market
+            
