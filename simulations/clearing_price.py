@@ -1,8 +1,16 @@
 import numpy as np
 import pandas as pd
 
+def find_clearing_price(buyer_product_values, seller_product_values, search_type="binary"):
+    if search_type == "binary":
+        return find_clearing_price_binary(buyer_product_values, seller_product_values)
+    elif search_type == "linear":
+        return find_clearing_price_linear(buyer_product_values, seller_product_values)
+    else:
+        raise Exception("Invalid search_type")
+
 # for a clearing price to be found, each buyer/seller must have a unique product_value
-def find_clearing_price(buyer_product_values, seller_product_values):
+def find_clearing_price_linear(buyer_product_values, seller_product_values):
     # make sure there are not no buyers or sellers
     if len(buyer_product_values) == 0 or len(seller_product_values) == 0: return None
 
@@ -60,13 +68,7 @@ def find_clearing_price_binary(buyer_product_values, seller_product_values):
     return [min_bound, max_bound]
 
 def find_median_clearing_price(buyer_product_values, seller_product_values, search_type="binary"):
-    if search_type == "binary":
-        price = find_clearing_price_binary(buyer_product_values, seller_product_values)
-    elif search_type == "linear":
-        price = find_clearing_price(buyer_product_values, seller_product_values)
-    else:
-        raise Exception("Invalid search_type")
-    
+    price = find_clearing_price(buyer_product_values, seller_product_values, search_type)
     if price: return np.mean(price)
     else: return None
 
@@ -84,11 +86,35 @@ def run_example(rand_seed=int(np.random.random()*1000), search_type="binary"):
     print("seller_product_values:")
     print(seller_product_values)
     print("clearing price interval:")
-    if search_type == "binary":
-        print(find_clearing_price_binary(buyer_product_values, seller_product_values))
-    elif search_type == "linear":
-        print(find_clearing_price(buyer_product_values, seller_product_values))
-    else:
-        raise Exception("Invalid search_type")
+    print(find_clearing_price(buyer_product_values, seller_product_values, search_type))
     print("median clearing price:")
     print(find_median_clearing_price(buyer_product_values, seller_product_values, search_type))
+
+'''
+Some examples:
+
+>>> clearing_price.run_example(467, search_type="linear")
+
+seed: 467
+buyer_product_values:
+[0.54838547 0.09054483]
+seller_product_values:
+[0.60260841 0.33358517 0.10169891 0.02851686]
+clearing price interval:
+[0.09166023627105185, 0.10058349775064163]
+median clearing price:
+0.09612186701084674
+
+>>> clearing_price.run_example(467, search_type="binary")
+
+seed: 467
+buyer_product_values:
+[0.54838547 0.09054483]
+seller_product_values:
+[0.60260841 0.33358517 0.10169891 0.02851686]
+clearing price interval:
+[0.09054482858610313, 0.10169890543559035]
+median clearing price:
+0.09612186701084674
+
+'''
