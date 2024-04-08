@@ -2,6 +2,9 @@ import numpy as np
 import pandas as pd
 
 def find_clearing_price(buyer_product_values, seller_product_values, search_type="binary"):
+    combined = np.concatenate([buyer_product_values, seller_product_values])
+    assert(np.unique(combined).size == combined.size)
+
     if search_type == "binary":
         return find_clearing_price_binary(buyer_product_values, seller_product_values)
     elif search_type == "linear":

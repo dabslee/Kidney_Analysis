@@ -39,8 +39,12 @@ class Agent:
     income: float # annual income in 2010 USD
     college: bool # graduated college?
     insurance: bool # has health insurance?
+
+    # behavioral characteristics
+    altruism_factor: float # utility derived from utility gain of others
+    nonrational_factor: float # non-rational utility or disutility of transplant
     time_discounting: float # hyperbolic time discounting parameter
-    prospect_curve: Callable # gain/loss utility function based on prospect theory
+    prospect_curve: Callable # gain/loss utility function based on prospect theory; encompasses risk tolerance
 
     # health stats
     ckd: bool # do they have CKD?
@@ -48,22 +52,32 @@ class Agent:
     crcl: float # creatinine clearance
     gfr: float # glomerular filtration rate
     blood_type: BLOOD_TYPE # ABO blood type
-    hla_type: list[int] # [a1, a2, b1, b2, dr1, dr2] HLA antigen list
-    cpra: float # estimated percentage of incompatible donors
+    hla_type: list[str] # List of HLA alleles
     diabetic: DIABETIC # diabetes status
     hypertension: bool # history of hypertension?
     comorbidities: bool # history of CMV, HepB/C, HIV, cancer, etc.
+    prior_donor: bool # previously donated a kidney
+    prior_recipient: bool # previously had another organ transplant
+
+    # assessment stats
+    cpra: float # estimated percentage of incompatible donors
     psychosocial: bool # eligible to donate based on psychosocial survey
+    urgent: bool # classified as medically urgent by OPTN standards
+    kdpi: float # Kidney Donor Profile Index (KDPI) score
 
     # registration and tracking
     dialysis_date: datetime.date # when (if at all) did they get on dialysis?
     registration_date: datetime.date # when (if at all) did they register as a donor/recipient?
     transplant_date: datetime.date # the date of the surgery
     death_date: datetime.date # date of patient death
+    waiting_time: float # official waiting time as measured by the OPTN standards
 
+    # outcomes
+    morbidity_rate: Callable # morbidity rate over time
+    incurred_costs: float # total costs (transportation, medical costs, lost wages etc. incurred as result of transplant)
+    subsidies: float # additional fees, taxes, and subsidies associated with transplant
 
-'''
-1. Simulate arrival of potential recipients (ESRD rate) and givers (parameterized rate)
-2. At each arrival event, run match algorithm and arrange for transplant.
-3. After transplant, update recipient and giver traits to reflect new health and track years/costs/earnings until death
-'''
+    # generates a recipient agent based on last 10 years of US OPTN demographics
+    # essentially draws from the US population distribution conditional on having ESRD
+    def generate_US_recipient():
+        
